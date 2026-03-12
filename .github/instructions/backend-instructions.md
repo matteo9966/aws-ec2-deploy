@@ -42,5 +42,9 @@ src/
 - Use a linter (e.g., ESLint) to enforce coding standards and catch potential issues early.
 - Regularly review and refactor code to improve performance and maintainability.
 - Document your code with comments where necessary, especially for complex logic and public APIs.
+
+## 4. Related Instructions
+- For route-specific standards and patterns, see [route-instructions.md](.github/instructions/route-instructions.md).
+
 By following these coding standards and best practices, we can ensure that our backend codebase remains clean, efficient, and maintainable as the project grows.
 
