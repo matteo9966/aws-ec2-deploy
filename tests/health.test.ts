@@ -9,4 +9,12 @@ describe('health route', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ status: 'ok' });
   });
+
+  it('serves home page html', async () => {
+    const response = await request(app).get('/home');
+
+    expect(response.status).toBe(200);
+    expect(response.headers['content-type']).toContain('text/html');
+    expect(response.text).toContain('Welcome to the home page');
+  });
 });
