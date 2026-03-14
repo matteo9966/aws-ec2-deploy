@@ -75,5 +75,6 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }} 
-
+            sudo systemctl restart nginx
+            sudo systemctl is-active nginx
             pm2 reload ${{env.BUILD_PATH}}/src/server.js --name aws-ec2-deploy || pm2 start ${{env.BUILD_PATH}}/src/server.js --name aws-ec2-deploy
