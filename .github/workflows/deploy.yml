@@ -6,6 +6,7 @@ on:
 
 env:
   DEPLOY_PATH: /var/www/aws-ec2-deploy
+  BUILD_PATH: ./backend/build
 
 jobs:
   deploy:
@@ -51,6 +52,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+            sudo rm -rf ${{ env.DEPLOY_PATH }}
             sudo mkdir -p ${{ env.DEPLOY_PATH }}
             sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} ${{ env.DEPLOY_PATH }}
 
@@ -60,7 +62,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "./backend/build"
+          source: ${{env.BUILD_PATH}}
           target: ${{ env.DEPLOY_PATH }}
           strip_components: 1
           overwrite: true
@@ -74,4 +76,4 @@ jobs:
           script: |
             cd ${{ env.DEPLOY_PATH }} 
 
-            pm2 reload build/src/server.js --name aws-ec2-deploy || pm2 start build/src/server.js --name aws-ec2-deploy
+            pm2 reload ${{env.BUILD_PATH}}/src/server.js --name aws-ec2-deploy || pm2 start ${{env.BUILD_PATH}}/src/server.js --name aws-ec2-deploy
