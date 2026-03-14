@@ -24,4 +24,5 @@ jobs:
           fi
 
       - name: Echo tag
-        run: echo "Tag pushed on main: ${GITHUB_REF_NAME}"
+        run: |
+            echo Tag pushed on main: "${GITHUB_REF_NAME}"
