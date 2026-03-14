@@ -1,0 +1,77 @@
+name: Deploy to EC2
+on:
+  push:
+    tags:
+      - "*"
+
+env:
+  DEPLOY_PATH: /var/www/aws-ec2-deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure tag is on main
+        run: |
+          git fetch origin main --depth=1
+          if ! git branch -r --contains "$GITHUB_SHA" | grep -q "origin/main"; then
+            echo "Tag commit is not on main. Skipping deployment."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript project
+        run: npm run build:backend
+
+      - name: Check SSH connection
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            echo "SSH connection successful"  
+            whoami
+
+      - name: Create target directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            sudo mkdir -p ${{ env.DEPLOY_PATH }}
+            sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} ${{ env.DEPLOY_PATH }}
+
+      - name: Deploy to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: ".,!.git,!node_modules"
+          target: ${{ env.DEPLOY_PATH }}
+          strip_components: 1
+          overwrite: true
+
+      - name: Setup and run application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }} 
+
+            pm2 reload dist/src/server.js --name aws-ec2-deploy || pm2 start dist/src/server.js --name aws-ec2-deploy
