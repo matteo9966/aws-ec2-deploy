@@ -60,7 +60,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: ".,!.git,!node_modules"
+          source: "./backend/build"
           target: ${{ env.DEPLOY_PATH }}
           strip_components: 1
           overwrite: true
@@ -74,4 +74,4 @@ jobs:
           script: |
             cd ${{ env.DEPLOY_PATH }} 
 
-            pm2 reload dist/src/server.js --name aws-ec2-deploy || pm2 start dist/src/server.js --name aws-ec2-deploy
+            pm2 reload build/src/server.js --name aws-ec2-deploy || pm2 start build/src/server.js --name aws-ec2-deploy
