@@ -4,7 +4,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/**/*.test.ts'],
-    reporters: ['default', 'html'],
-    outputFile: 'test-results.xml',
+    reporters: ['default', 'json'],
+
+      outputFile: { html: './json/test-output.json' }
   }
 });
