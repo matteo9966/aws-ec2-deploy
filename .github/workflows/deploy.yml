@@ -26,11 +26,12 @@ jobs:
           fi
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 24
       - name: Install dependencies
-        run: npm install
+        working-directory: backend
+        run: npm ci
 
       - name: Build TypeScript project
         run: npm run build:backend
@@ -52,7 +53,6 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            sudo rm -rf ${{ env.DEPLOY_PATH }}
             sudo mkdir -p ${{ env.DEPLOY_PATH }}
             sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} ${{ env.DEPLOY_PATH }}
 
@@ -74,7 +74,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd ${{ env.DEPLOY_PATH }} 
-            sudo systemctl restart nginx
+            sudo systemctl reload nginx
             sudo systemctl is-active nginx
-            pm2 reload ${{env.BUILD_PATH}}/src/server.js --name aws-ec2-deploy || pm2 start ${{env.BUILD_PATH}}/src/server.js --name aws-ec2-deploy
+            pm2 reload ${{ env.DEPLOY_PATH }}/backend/build/src/server.js --name aws-ec2-deploy || pm2 start ${{ env.DEPLOY_PATH }}/backend/build/src/server.js --name aws-ec2-deploy
+            pm2 save
