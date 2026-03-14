@@ -6,6 +6,6 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     reporters: ['default', 'json'],
 
-      outputFile: { json: './json/test-output.json' }
+      outputFile: { json: './test-reports/test-output.json' }
   }
 });
