@@ -12,7 +12,7 @@
     "dev:frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "test:backend": "cd backend && npm run test",
-    "bundle:backend": "cd backend && npm run bundle && cp -r ./public ./build/public",
+    "bundle:backend": "cd backend && npm run bundle && cp -r ./public ./dist/public",
     "build:frontend": "cd frontend && npm run build"
   },
   "devDependencies": {
