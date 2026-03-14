@@ -1,0 +1,27 @@
+name: Echo Tag On Main
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  echo-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag commit is on main
+        shell: bash
+        run: |
+          git fetch origin main --depth=1
+          if ! git branch -r --contains "$GITHUB_SHA" | grep -q "origin/main"; then
+            echo "Tag commit is not on main. Skipping."
+            exit 0
+          fi
+
+      - name: Echo tag
+        run: echo "Tag pushed on main: ${GITHUB_REF_NAME}"
