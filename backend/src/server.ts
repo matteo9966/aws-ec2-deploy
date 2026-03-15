@@ -24,7 +24,7 @@ const swaggerSpec = swaggerJsdoc({
       version: '1.0.0',
     },
   },
-  apis: ['./src/controllers/*.ts'],
+  apis: ['./src/routes/index.ts'],
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
