@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import path from 'node:path';
-import { getUsers } from '../controllers/users.controller';
+import { getUsers, /* getPresignedUrl */ } from '../controllers/users.controller';
+import { listItemsInBucket } from '../controllers/s3.controller';
 
 export const router = Router();
 
@@ -13,3 +14,6 @@ router.get('/home', (_request, response) => {
 });
 
 router.get('/users', getUsers);
+// router.get('/presigned-url', getPresignedUrl);
+
+router.get('/list-items-in-bucket', listItemsInBucket);
