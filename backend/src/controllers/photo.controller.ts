@@ -3,7 +3,7 @@ import { s3Client } from "../lib/aws";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "../lib/prisma";
 import { Photo } from "../../prisma/generated/prisma/client";
-import { createPhoto } from "../services/photo.service";
+import { createPhoto, getAllPhotos } from "../services/photo.service";
 
 export const uploadMultiplePhotos = async (req: Request, res: Response) => {
   try {
@@ -63,11 +63,11 @@ export async function handleCreatePhoto(req: Request, res: Response) {
   }
 }
 
-// export async function handleGetPhotos(req: Request, res: Response) {
-//   try {
-//     const photos = await getPhotos();
-//     res.status(200).json(photos);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to fetch photos" });
-//   }
-// }
+export async function handleGetPhotos(req: Request, res: Response) {
+  try {
+    const photos = await getAllPhotos();
+    res.status(200).json(photos);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch photos" });
+  }
+}

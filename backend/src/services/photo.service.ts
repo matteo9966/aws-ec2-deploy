@@ -8,3 +8,7 @@ export const createPhoto = async (data:Photo) => {
   });
 
 }
+
+export const getAllPhotos = async () => {
+    return await prisma.photo.findMany();
+}

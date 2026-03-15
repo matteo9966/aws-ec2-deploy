@@ -7,6 +7,7 @@ import { listItemsInBucket } from "../controllers/s3.controller";
 import { upload } from "../lib/multer";
 
 import { uploadMultiplePhotos } from "../controllers/photo.controller";
+import { getAllPhotos } from "../services/photo.service";
 
 export const router = Router();
 
@@ -63,15 +64,20 @@ router.get("/list-items-in-bucket", listItemsInBucket);
  * /upload-multiple-photos:
  *   post:
  *     summary: Upload multiple photos to S3 and save metadata to the database
- *     consumes:
- *       - multipart/form-data
- *     parameters:
- *       - in: formData
- *         name: photos
- *         type: array
- *         items:
- *           type: file
- *         description: Array of photo files to upload
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of image files to upload
+ *      
  *     responses:
  *       200:
  *         description: Files uploaded successfully
@@ -91,6 +97,26 @@ router.get("/list-items-in-bucket", listItemsInBucket);
  */
 router.post(
   "/upload-multiple-photos",
-  upload.array("photos", 10),
+  upload.array("files", 10),
   uploadMultiplePhotos
 );
+
+/**
+ * @swagger
+ * /get-photos:
+ *   get:
+ *     summary: Retrieve a list of photos
+ *     responses:
+ *       200:
+ *         description: Returns a list of photos
+ *       500:
+ *         description: Failed to fetch photos
+ */
+router.get("/get-photos", async (req, res) => {
+  try {
+    const photos = await getAllPhotos(); 
+    res.status(200).json(photos);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch photos" });
+  }
+});
