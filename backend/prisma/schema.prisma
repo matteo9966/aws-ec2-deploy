@@ -1,0 +1,24 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Photo {
+  id          String   @id @default(uuid()) // UUID for unique identification
+  description String?  // Optional description
+  height      Int?     // Optional height metadata
+  width       Int?     // Optional width metadata
+  fileSize    Int?     // Optional file size metadata
+  s3Key       String   // S3 key for creating signed URLs
+  createdAt   DateTime @default(now()) // Timestamp for creation
+  updatedAt   DateTime @updatedAt      // Timestamp for updates
+}
